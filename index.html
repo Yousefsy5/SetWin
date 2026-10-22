@@ -273,45 +273,66 @@
         </div>
 
         <div class="action-area">
-            <button class="btn-generate" onclick="buildInstaller()">Generate Setup Command</button>
+            <button type="button" class="btn-generate" onclick="buildInstaller()">Generate Setup Command</button>
         </div>
 
-        <div class="output-box" id="resultArea">
+        <div class="output-box" id="resultArea" aria-live="polite">
             <div class="output-header">
                 <strong>Run this in Command Prompt (cmd) to install:</strong>
+                <button type="button" class="btn-copy" id="copyBtn" onclick="copyToClipboard()">Copy Command</button>
+            </div>
+            <textarea id="commandOutput" readonly aria-label="Generated Winget install command"></textarea>
+            <p style="color:#cbd5e1; font-size:.85rem; margin-bottom:0;">
+                Review the command before running it. Winget and an internet connection are required.
+            </p>
+        </div>
+    </div>
 
+    <script>
+        function buildInstaller() {
+            const selectedApps = document.querySelectorAll('.app-checkbox:checked');
+            const resultArea = document.getElementById('resultArea');
+            const commandOutput = document.getElementById('commandOutput');
+            const copyBtn = document.getElementById('copyBtn');
 
-function buildInstaller() {
-const selectedApps = document.querySelectorAll('.app-checkbox:checked');
-const resultArea = document.getElementById('resultArea');
-const commandOutput = document.getElementById('commandOutput');
-const copyBtn = document.getElementById('copyBtn');
-if (selectedApps.length === 0) {
-alert("Please select at least one application to install.");
-resultArea.style.display = "none";
-return;
-}
-let ids = [];
-selectedApps.forEach(app => {
-ids.push(app.value);
-});
-// Corrected Template Literals for mapping the individual strings
-let appChain = ids.map(id => winget install --id ${id} --silent --accept-package-agreements).join(" && ");
-commandOutput.value = appChain;
-resultArea.style.display = "block";
-// Reset copy button styling text if changing application combinations
-copyBtn.innerText = "Copy Command";
-copyBtn.style.backgroundColor = "var(--success)";
-}
-function copyToClipboard() {
-const commandOutput = document.getElementById('commandOutput');
-const copyBtn = document.getElementById('copyBtn');
-commandOutput.select();
-commandOutput.setSelectionRange(0, 99999); // For mobile device security compliance
-navigator.clipboard.writeText(commandOutput.value).then(() => {
-copyBtn.innerText = "Copied! ✓";
-copyBtn.style.backgroundColor = "#047857"; // Shakes into alternate darker green state
-}).catch(err => {
-alert("Failed to copy code text automatically: " + err);
-});
-}
+            if (selectedApps.length === 0) {
+                alert('Please select at least one application to install.');
+                resultArea.style.display = 'none';
+                return;
+            }
+
+            const ids = Array.from(selectedApps, app => app.value);
+            const appChain = ids
+                .map(id => `winget install --id "${id}" --exact --silent --accept-package-agreements --accept-source-agreements`)
+                .join(' && ');
+
+            commandOutput.value = appChain;
+            resultArea.style.display = 'block';
+            copyBtn.innerText = 'Copy Command';
+            copyBtn.style.backgroundColor = 'var(--success)';
+        }
+
+        async function copyToClipboard() {
+            const commandOutput = document.getElementById('commandOutput');
+            const copyBtn = document.getElementById('copyBtn');
+
+            try {
+                await navigator.clipboard.writeText(commandOutput.value);
+                copyBtn.innerText = 'Copied! ✓';
+                copyBtn.style.backgroundColor = '#047857';
+            } catch (err) {
+                // Clipboard API can be unavailable when opening a local file.
+                commandOutput.focus();
+                commandOutput.select();
+                const copied = document.execCommand('copy');
+                if (copied) {
+                    copyBtn.innerText = 'Copied! ✓';
+                    copyBtn.style.backgroundColor = '#047857';
+                } else {
+                    alert('Copy failed. Select the command and press Ctrl+C.');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
