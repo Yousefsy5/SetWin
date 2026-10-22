@@ -7,9 +7,12 @@
     <style>
         :root {
             --primary: #0066cc;
+            --primary-hover: #0052a3;
             --dark: #1e293b;
             --light: #f8fafc;
             --border: #e2e8f0;
+            --success: #10b981;
+            --success-hover: #059669;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -19,7 +22,7 @@
             padding: 40px 20px;
         }
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
             background: #ffffff;
             padding: 30px;
@@ -41,17 +44,21 @@
             color: #64748b;
             margin-top: 5px;
         }
+        .category-section {
+            margin-bottom: 35px;
+        }
         .category-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: bold;
-            margin: 20px 0 10px 0;
-            color: var(--dark);
+            margin-bottom: 15px;
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
         }
         .app-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
             gap: 15px;
-            margin-bottom: 30px;
         }
         .app-card {
             background: #ffffff;
@@ -63,6 +70,7 @@
             gap: 12px;
             cursor: pointer;
             transition: all 0.2s;
+            user-select: none;
         }
         .app-card:hover {
             border-color: var(--primary);
@@ -72,16 +80,19 @@
             width: 18px;
             height: 18px;
             cursor: pointer;
+            accent-color: var(--primary);
         }
         .action-area {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
         }
         .btn-generate {
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 14px 35px;
+            padding: 14px 40px;
             font-size: 1.1rem;
             font-weight: bold;
             border-radius: 6px;
@@ -89,25 +100,54 @@
             transition: background 0.2s;
         }
         .btn-generate:hover {
-            background-color: #0052a3;
+            background-color: var(--primary-hover);
         }
         .output-box {
-            margin-top: 30px;
+            margin-top: 35px;
             display: none;
             text-align: left;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #334155;
+        }
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .output-header strong {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+        .btn-copy {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-copy:hover {
+            background-color: var(--success-hover);
         }
         textarea {
             width: 100%;
-            height: 80px;
+            height: 90px;
             font-family: 'Courier New', Courier, monospace;
             padding: 12px;
-            border: 1px solid var(--border);
+            border: 1px solid #334155;
             border-radius: 6px;
-            background: #0f172a;
+            background: #020617;
             color: #38bdf8;
             resize: none;
             box-sizing: border-box;
-            margin-top: 10px;
+            font-size: 0.95rem;
+            line-height: 1.4;
         }
     </style>
 </head>
@@ -116,49 +156,133 @@
 <div class="container">
     <header>
         <h1>SetWin</h1>
-        <p>Select your favorite applications and deploy them instantly.</p>
+        <p>Select your favorite applications and deploy them instantly via WinGet.</p>
     </header>
 
     <!-- Web Browsers Section -->
-    <div class="category-title">Web Browsers</div>
-    <div class="app-grid">
-        <label class="app-card">
-            <input type="checkbox" class="app-checkbox" value="Google.Chrome">
-            <span>Google Chrome</span>
-        </label>
-        <label class="app-card">
-            <input type="checkbox" class="app-checkbox" value="Mozilla.Firefox">
-            <span>Mozilla Firefox</span>
-        </label>
-        <label class="app-card">
-            <input type="checkbox" class="app-checkbox" value="Brave.Brave">
-            <span>Brave Browser</span>
-        </label>
+    <div class="category-section">
+        <div class="category-title">Web Browsers</div>
+        <div class="app-grid">
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="Google.Chrome">
+                <span>Google Chrome</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="Mozilla.Firefox">
+                <span>Mozilla Firefox</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="Brave.Brave">
+                <span>Brave Browser</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="Opera.Opera">
+                <span>Opera Browser</span>
+            </label>
+        </div>
     </div>
 
     <!-- Utilities Section -->
-    <div class="category-title">Utilities & Media</div>
-    <div class="app-grid">
-        <label class="app-card">
-            <input type="checkbox" class="app-checkbox" value="7zip.7zip">
-            <span>7-Zip</span>
-        </label>
-        <label class="app-card">
-            <input type="checkbox" class="app-checkbox" value="VideoLAN.VLC">
-            <span>VLC Media Player</span>
-        </label>
-        <label class="app-card">
-            <input type="checkbox" class="app-checkbox" value="Discord.Discord">
-            <span>Discord</span>
-        </label>
+    <div class="category-section">
+        <div class="category-title">Utilities & Tools</div>
+        <div class="app-grid">
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="7zip.7zip">
+                <span>7-Zip</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="RARLab.WinRAR">
+                <span>WinRAR</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="Git.Git">
+                <span>Git</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="Notepad++.Notepad++">
+                <span>Notepad++</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Media Section -->
+    <div class="category-section">
+        <div class="category-title">Media & Entertainment</div>
+        <div class="app-grid">
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="VideoLAN.VLC">
+                <span>VLC Media Player</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="Spotify.Spotify">
+                <span>Spotify</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="Discord.Discord">
+                <span>Discord</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="OBSProject.OBSStudio">
+                <span>OBS Studio</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Developer & Creative Tools Section -->
+    <div class="category-section">
+        <div class="category-title">Developer & Creative Tools</div>
+        <div class="app-grid">
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="Microsoft.VisualStudioCode">
+                <span>VS Code</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="GIMP.GIMP">
+                <span>GIMP Image Editor</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="Postman.Postman">
+                <span>Postman</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="Docker.DockerDesktop">
+                <span>Docker Desktop</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Gaming & Clients Section -->
+    <div class="category-section">
+        <div class="category-title">Gaming Socials</div>
+        <div class="app-grid">
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="Valve.Steam">
+                <span>Steam</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="EpicGames.EpicGamesLauncher">
+                <span>Epic Games Launcher</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="ElectronicArts.EADesktop">
+                <span>EA Desktop</span>
+            </label>
+            <label class="app-card">
+                <input type="checkbox" class="app-checkbox" value="Ubisoft.Connect">
+                <span>Ubisoft Connect</span>
+            </label>
+        </div>
     </div>
 
     <div class="action-area">
-        <button class="btn-generate" onclick="buildInstaller()">Get SetWin Command</button>
+        <button class="btn-generate" onclick="buildInstaller()">Generate Setup Command</button>
     </div>
 
     <div class="output-box" id="resultArea">
-        <strong>Run this command in Command Prompt (cmd) or PowerShell to install:</strong>
+        <div class="output-header">
+            <strong>Run this in Command Prompt (cmd) to install:</strong>
+            <button class="btn-copy" id="copyBtn" onclick="copyToClipboard()">Copy Command</button>
+        </div>
         <textarea id="commandOutput" readonly></textarea>
     </div>
 </div>
@@ -168,27 +292,33 @@
         const selectedApps = document.querySelectorAll('.app-checkbox:checked');
         const resultArea = document.getElementById('resultArea');
         const commandOutput = document.getElementById('commandOutput');
-
-        if (selectedApps.length === 0) {
-            alert("Please select at least one application to install.");
-            resultArea.style.display = "none";
-            return;
-        }
-
-        let ids = [];
-        selectedApps.forEach(app => {
-            ids.push(app.value);
-        });
-
-        // Constructs a chain of native commands
-        // --silent completes installations without forcing the user to click through setup windows
-        // --accept-package-agreements bypasses initial legal prompts automatically
-        let finalCommand = "winget install " + ids.join(" --silent ; winget install ") + " --silent --accept-package-agreements";
-
-        commandOutput.value = finalCommand;
-        resultArea.style.display = "block";
-    }
-</script>
-
-</body>
-</html>
+const copyBtn = document.getElementById('copyBtn');
+if (selectedApps.length === 0) {
+alert("Please select at least one application to install.");
+resultArea.style.display = "none";
+return;
+}
+let ids = [];
+selectedApps.forEach(app => {
+ids.push(app.value);
+});
+// Formats commands safely using sequential chain structure
+let appChain = ids.map(id => winget install --id ${id} --silent --accept-package-agreements).join(" && ");
+commandOutput.value = appChain;
+resultArea.style.display = "block";
+// Reset copy button styling text if changing application combinations
+copyBtn.innerText = "Copy Command";
+copyBtn.style.backgroundColor = "var(--success)";
+}
+function copyToClipboard() {
+const commandOutput = document.getElementById('commandOutput');
+const copyBtn = document.getElementById('copyBtn');
+commandOutput.select();
+commandOutput.setSelectionRange(0, 99999); // For mobile device security compliance
+navigator.clipboard.writeText(commandOutput.value).then(() => {
+copyBtn.innerText = "Copied! ✓";
+copyBtn.style.backgroundColor = "#047857"; // Shakes into alternate darker green state
+}).catch(err => {
+alert("Failed to copy code text automatically: ", err);
+});
+}
