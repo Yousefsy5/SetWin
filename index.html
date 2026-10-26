@@ -1,382 +1,308 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SetWin - Custom Software Installer</title>
-    <style>
-        :root {
-            --primary: #0066cc;
-            --primary-hover: #0052a3;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --border: #e2e8f0;
-            --success: #10b981;
-            --success-hover: #059669;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light);
-            color: var(--dark);
-            margin: 0;
-            padding: 40px 20px;
-        }
-        .container {
-            max-width: 950px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 20px;
-        }
-        header h1 {
-            margin: 0;
-            color: var(--primary);
-            font-size: 2.5rem;
-        }
-        header p {
-            color: #64748b;
-            margin-top: 5px;
-        }
-        .category-section {
-            margin-bottom: 35px;
-        }
-        .category-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: var(--primary);
-            border-left: 4px solid var(--primary);
-            padding-left: 10px;
-        }
-        .app-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-            gap: 15px;
-        }
-        .app-card {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            user-select: none;
-        }
-        .app-card:hover {
-            border-color: var(--primary);
-            background-color: #f1f5f9;
-        }
-        .app-card input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-        .action-area {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-        }
-        .btn-generate {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 14px 40px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .btn-generate:hover {
-            background-color: var(--primary-hover);
-        }
-        .output-box {
-            margin-top: 35px;
-            display: none;
-            text-align: left;
-            background: #0f172a;
-            border-radius: 8px;
-            padding: 20px;
-            border: 1px solid #334155;
-        }
-        .output-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .output-header strong {
-            color: #cbd5e1;
-            font-size: 0.95rem;
-        }
-        .btn-copy {
-            background-color: var(--success);
-            color: white;
-            border: none;
-            padding: 6px 14px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .btn-copy:hover {
-            background-color: var(--success-hover);
-        }
-        textarea {
-            width: 100%;
-            height: 90px;
-            font-family: 'Courier New', Courier, monospace;
-            padding: 12px;
-            border: 1px solid #334155;
-            border-radius: 6px;
-            background: #020617;
-            color: #38bdf8;
-            resize: none;
-            box-sizing: border-box;
-            font-size: 0.95rem;
-            line-height: 1.4;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SetWin – Windows app installer</title>
+<style>
+:root{
+  --bg:#f2f4f8; --surface:#fff; --ink:#14202e; --muted:#5b6878; --line:#dde3ec;
+  --accent:#1f5fd1; --accent-ink:#fff; --accent-soft:#e8f0fd;
+  --term:#0d1520; --term-ink:#9fd3ff; --ok:#12805c; --warn:#a15c00;
+  --r:10px;
+  font-family:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0e141c;--surface:#151d28;--ink:#e6ebf2;--muted:#93a1b3;--line:#263243;
+  --accent:#5b9bff;--accent-ink:#071224;--accent-soft:#18283f;--term:#080d14;--ok:#4cc79a;--warn:#e0a24a;color-scheme:dark}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.5}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.top{background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:1180px;margin:0 auto;padding:22px 24px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;margin-right:auto}
+.logo{width:38px;height:38px;border-radius:9px;background:var(--accent);display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:9px}
+.logo i{background:var(--accent-ink);border-radius:2px;opacity:.95}
+h1{font-size:1.35rem;margin:0;letter-spacing:-.01em}
+.sub{margin:0;color:var(--muted);font-size:.9rem}
+.search{position:relative;flex:1 1 280px;max-width:380px}
+.search input{width:100%;padding:10px 12px 10px 38px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg)}
+.search svg{position:absolute;left:12px;top:50%;translate:0 -50%;width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2}
+
+.layout{max-width:1180px;margin:0 auto;padding:24px;display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:24px;align-items:start}
+.cat{margin-bottom:28px}
+.cat-head{display:flex;align-items:baseline;gap:12px;margin-bottom:10px}
+.cat-head h2{font-size:1rem;margin:0}
+.cat-head span{color:var(--muted);font-size:.85rem}
+.cat-head button{margin-left:auto;background:none;border:0;color:var(--accent);cursor:pointer;font-size:.85rem;padding:4px 6px;border-radius:6px}
+.cat-head button:hover{background:var(--accent-soft)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.app{position:relative;display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);cursor:pointer;user-select:none}
+.app:hover{border-color:var(--accent)}
+.app input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.app:has(input:checked){border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.app:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.mono{flex:none;width:34px;height:34px;border-radius:8px;display:grid;place-items:center;font-weight:700;font-size:.8rem;color:#fff}
+.name{font-size:.92rem;font-weight:600;line-height:1.25}
+.name small{display:block;font-weight:400;color:var(--muted);font-size:.78rem}
+.tick{margin-left:auto;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line);flex:none;display:grid;place-items:center}
+.app:has(input:checked) .tick{background:var(--accent);border-color:var(--accent)}
+.app:has(input:checked) .tick::after{content:"";width:8px;height:4px;border:2px solid var(--accent-ink);border-top:0;border-right:0;rotate:-45deg;translate:0 -1px}
+.empty{padding:40px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r);display:none}
+
+.panel{position:sticky;top:16px;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.panel-h{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+.panel-h h2{margin:0;font-size:1rem}
+.count{font-size:.85rem;color:var(--muted)}
+.chips{padding:12px 18px;display:flex;flex-wrap:wrap;gap:6px;max-height:150px;overflow:auto;min-height:56px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 6px 3px 10px;background:var(--accent-soft);border-radius:99px;font-size:.8rem}
+.chip button{border:0;background:none;cursor:pointer;color:var(--muted);width:18px;height:18px;border-radius:50%;line-height:1}
+.chip button:hover{color:var(--ink);background:var(--line)}
+.none{color:var(--muted);font-size:.88rem;margin:0}
+.tabs{display:flex;gap:4px;padding:0 18px}
+.tabs button{border:0;background:none;padding:8px 12px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;font-size:.88rem}
+.tabs button[aria-selected="true"]{color:var(--accent);border-color:var(--accent);font-weight:600}
+.term{margin:0 18px;background:var(--term);border-radius:8px;padding:12px;font:.8rem/1.5 "Cascadia Mono",Consolas,monospace;color:var(--term-ink);height:130px;overflow:auto;white-space:pre-wrap;word-break:break-all}
+.term.dim{color:#5f7184}
+.acts{display:flex;gap:8px;padding:14px 18px 6px}
+.btn{flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600;font-size:.9rem}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover:not(:disabled){filter:brightness(1.08)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.link{border:0;background:none;color:var(--muted);cursor:pointer;font-size:.82rem;padding:0 18px 4px;text-align:left}
+.link:hover{color:var(--ink)}
+.note{padding:10px 18px 16px;margin:0;font-size:.8rem;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:24px;translate:-50% 0;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:8px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .panel{position:static}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>SetWin</h1>
-            <p>Select your favorite applications and deploy them instantly via WinGet.</p>
-        </header>
+<header class="top"><div class="top-in">
+  <div class="brand">
+    <div class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div><h1>SetWin</h1><p class="sub">Pick your apps. Get one install script for Windows.</p></div>
+  </div>
+  <label class="search">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Search apps" aria-label="Search apps" autocomplete="off">
+  </label>
+</div></header>
 
-        <!-- Web Browsers Section -->
-        <div class="category-section">
-            <div class="category-title">Web Browsers</div>
-            <div class="app-grid">
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Google.Chrome">
-                    <span>Google Chrome</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Mozilla.Firefox">
-                    <span>Mozilla Firefox</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Brave.Brave">
-                    <span>Brave Browser</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Opera.Opera">
-                    <span>Opera Browser</span>
-                </label>
-            </div>
-        </div>
+<main class="layout">
+  <section id="catalog" aria-label="Applications"></section>
 
-        <!-- Utilities Section -->
-        <div class="category-section">
-            <div class="category-title">Utilities & Tools</div>
-            <div class="app-grid">
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="7zip.7zip">
-                    <span>7-Zip</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="RARLab.WinRAR">
-                    <span>WinRAR</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Git.Git">
-                    <span>Git</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Notepad++.Notepad++">
-                    <span>Notepad++</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="CodeSector.TeraCopy">
-                    <span>TeraCopy</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Microsoft.PowerToys">
-                    <span>Microsoft PowerToys</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="voidtools.Everything">
-                    <span>Everything Search</span>
-                </label>
-            </div>
-        </div>
-
-        <!-- Media Section -->
-        <div class="category-section">
-            <div class="category-title">Media & Entertainment</div>
-            <div class="app-grid">
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="VideoLAN.VLC">
-                    <span>VLC Media Player</span>
-                </label> <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Spotify.Spotify">
-                    <span>Spotify</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Discord.Discord">
-                    <span>Discord</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="OBSProject.OBSStudio">
-                    <span>OBS Studio</span>
-                </label>
-            </div>
-        </div>
-
-        <!-- Developer & Creative Tools Section -->
-        <div class="category-section">
-            <div class="category-title">Developer & Creative Tools</div>
-            <div class="app-grid">
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Microsoft.VisualStudioCode">
-                    <span>VS Code</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="GIMP.GIMP">
-                    <span>GIMP Image Editor</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Postman.Postman">
-                    <span>Postman</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Docker.DockerDesktop">
-                    <span>Docker Desktop</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Python.Python.3.13">
-                    <span>Python 3.13 (includes IDLE)</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="ArduinoSA.IDE.stable">
-                    <span>Arduino IDE</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Thonny.Thonny">
-                    <span>Thonny Python IDE</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="GitHub.GitHubDesktop">
-                    <span>GitHub Desktop</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Microsoft.VisualStudio.2022.Community">
-                    <span>Visual Studio Community</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="JetBrains.PyCharm.Community">
-                    <span>PyCharm Community</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Microsoft.OpenJDK.21">
-                    <span>OpenJDK 21 (Java)</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Microsoft.WindowsTerminal">
-                    <span>Windows Terminal</span>
-                </label>
-            </div>
-        </div>
-
-        <!-- Gaming & Clients Section -->
-        <div class="category-section">
-            <div class="category-title">Gaming Socials</div>
-            <div class="app-grid">
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Valve.Steam">
-                    <span>Steam</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="EpicGames.EpicGamesLauncher">
-                    <span>Epic Games Launcher</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="ElectronicArts.EADesktop">
-                    <span>EA Desktop</span>
-                </label>
-                <label class="app-card">
-                    <input type="checkbox" class="app-checkbox" value="Ubisoft.Connect">
-                    <span>Ubisoft Connect</span>
-                </label>
-            </div>
-        </div>
-
-        <div class="action-area">
-            <button type="button" class="btn-generate" onclick="buildInstaller()">Generate Setup Command</button>
-        </div>
-
-        <div class="output-box" id="resultArea" aria-live="polite">
-            <div class="output-header">
-                <strong>Run this in Command Prompt (cmd) to install:</strong>
-                <button type="button" class="btn-copy" id="copyBtn" onclick="copyToClipboard()">Copy Command</button>
-            </div>
-            <textarea id="commandOutput" readonly aria-label="Generated Winget install command"></textarea>
-            <p style="color:#cbd5e1; font-size:.85rem; margin-bottom:0;">
-                Review the command before running it. Winget and an internet connection are required.
-            </p>
-        </div>
+  <aside class="panel" aria-label="Install summary">
+    <div class="panel-h"><h2>Your install list</h2><span class="count" id="count">0 selected</span></div>
+    <div class="chips" id="chips"></div>
+    <div class="tabs" role="tablist" aria-label="Shell">
+      <button role="tab" id="t-cmd" aria-selected="true">Command Prompt</button>
+      <button role="tab" id="t-ps" aria-selected="false">PowerShell</button>
     </div>
+    <pre class="term dim" id="out" aria-live="polite"></pre>
+    <div class="acts">
+      <button class="btn primary" id="copy" disabled>Copy command</button>
+      <button class="btn" id="dl" disabled>Download .bat</button>
+    </div>
+    <button class="link" id="clear">Clear selection</button>
+    <p class="note">Needs Windows 10 or 11 with WinGet. Run as administrator for apps like Docker Desktop. A failed app won’t stop the rest.</p>
+  </aside>
+</main>
+<div class="toast" id="toast" role="status"></div>
 
-    <script>
-        function buildInstaller() {
-            const selectedApps = document.querySelectorAll('.app-checkbox:checked');
-            const resultArea = document.getElementById('resultArea');
-            const commandOutput = document.getElementById('commandOutput');
-            const copyBtn = document.getElementById('copyBtn');
+<script>
+const CATS = [
+  {id:"browsers", name:"Web browsers", color:"#2f6fdb", apps:[
+    ["Google.Chrome","Google Chrome"],["Mozilla.Firefox","Mozilla Firefox"],
+    ["Brave.Brave","Brave Browser"],["Opera.Opera","Opera Browser"],
+    ["Vivaldi.Vivaldi","Vivaldi"],["Waterfox.Waterfox","Waterfox","Firefox-based"],
+    ["TorProject.TorBrowser","Tor Browser","Private browsing"]]},
+  {id:"utils", name:"Utilities", color:"#0f8a7a", apps:[
+    ["7zip.7zip","7-Zip","File archiver"],["RARLab.WinRAR","WinRAR","File archiver"],
+    ["Git.Git","Git","Version control"],["Notepad++.Notepad++","Notepad++","Text editor"],
+    ["CodeSector.TeraCopy","TeraCopy","Faster file copying"],["Microsoft.PowerToys","PowerToys","Windows power tools"],
+    ["voidtools.Everything","Everything","Instant file search"],["qBittorrent.qBittorrent","qBittorrent","Torrent client"],
+    ["ShareX.ShareX","ShareX","Screenshots and capture"],["AutoHotkey.AutoHotkey","AutoHotkey","Automation scripts"],
+    ["WinSCP.WinSCP","WinSCP","SFTP and SCP client"],["PuTTY.PuTTY","PuTTY","SSH client"]]},
+  {id:"productivity", name:"Office and productivity", color:"#c0392b", apps:[
+    ["TheDocumentFoundation.LibreOffice","LibreOffice","Free office suite"],
+    ["Adobe.Acrobat.Reader.64-bit","Adobe Acrobat Reader","PDF viewer"],
+    ["SumatraPDF.SumatraPDF","SumatraPDF","Lightweight PDF reader"],
+    ["Obsidian.Obsidian","Obsidian","Notes and knowledge base"],
+    ["Zoom.Zoom","Zoom","Video meetings"],["Microsoft.Teams","Microsoft Teams"],
+    ["SlackTechnologies.Slack","Slack"],["Dropbox.Dropbox","Dropbox"],
+    ["Google.GoogleDrive","Google Drive"]]},
+  {id:"media", name:"Media and communication", color:"#b4457a", apps:[
+    ["VideoLAN.VLC","VLC Media Player"],["Spotify.Spotify","Spotify"],
+    ["Discord.Discord","Discord"],["OBSProject.OBSStudio","OBS Studio","Recording and streaming"],
+    ["Telegram.TelegramDesktop","Telegram"],["OpenWhisperSystems.Signal","Signal","Private messaging"],
+    ["clsid2.mpc-hc","MPC-HC","Lightweight video player"],["Plex.Plex","Plex","Media library"],
+    ["XBMCFoundation.Kodi","Kodi","Media center"],["foobar2000.foobar2000","foobar2000","Music player"]]},
+  {id:"creative", name:"Creative and editing", color:"#d1792a", apps:[
+    ["GIMP.GIMP","GIMP","Image editor"],["Inkscape.Inkscape","Inkscape","Vector graphics"],
+    ["Krita.Krita","Krita","Digital painting"],["dotPDN.PaintDotNet","Paint.NET","Simple image editor"],
+    ["IrfanSkiljan.IrfanView","IrfanView","Image viewer"],["Blender.Blender","Blender","3D and animation"],
+    ["BlackmagicDesign.DaVinciResolve","DaVinci Resolve","Video editing"],["Kdenlive.Kdenlive","Kdenlive","Video editor"],
+    ["HandBrake.HandBrake","HandBrake","Video converter"],["Audacity.Audacity","Audacity","Audio editor"],
+    ["Figma.Figma","Figma","UI design"]]},
+  {id:"dev", name:"Developer tools", color:"#6b4fc9", apps:[
+    ["Microsoft.VisualStudioCode","VS Code"],["Microsoft.VisualStudio.2022.Community","Visual Studio Community"],
+    ["JetBrains.PyCharm.Community","PyCharm Community"],["JetBrains.IntelliJIDEA.Community","IntelliJ IDEA Community"],
+    ["JetBrains.Toolbox","JetBrains Toolbox"],["Google.AndroidStudio","Android Studio"],
+    ["SublimeHQ.SublimeText.4","Sublime Text 4"],["Neovim.Neovim","Neovim"],
+    ["Python.Python.3.13","Python 3.13","Includes IDLE"],["Thonny.Thonny","Thonny","Python IDE"],
+    ["OpenJS.NodeJS.LTS","Node.js LTS"],["GoLang.Go","Go"],["Rustlang.Rustup","Rust","Via rustup"],
+    ["Microsoft.DotNet.SDK.8",".NET SDK 8"],["Microsoft.OpenJDK.21","OpenJDK 21","Java"],
+    ["EclipseAdoptium.Temurin.21.JDK","Eclipse Temurin 21","Java JDK"],["ArduinoSA.IDE.stable","Arduino IDE"],
+    ["GitHub.GitHubDesktop","GitHub Desktop"],["GitHub.cli","GitHub CLI"],
+    ["Postman.Postman","Postman"],["Insomnia.Insomnia","Insomnia","API client"],
+    ["DBeaver.DBeaver.Community","DBeaver","Database client"],["Docker.DockerDesktop","Docker Desktop"],
+    ["Microsoft.WSL","WSL","Linux on Windows"],["Oracle.VirtualBox","VirtualBox","Virtual machines"],
+    ["Microsoft.WindowsTerminal","Windows Terminal"],["Microsoft.PowerShell","PowerShell 7"],
+    ["Wireshark.Wireshark","Wireshark","Network analysis"],["Unity.UnityHub","Unity Hub"],
+    ["GodotEngine.GodotEngine","Godot Engine","Game engine"]]},
+  {id:"system", name:"System and hardware", color:"#4a6a8a", apps:[
+    ["CPUID.CPU-Z","CPU-Z"],["REALiX.HWiNFO","HWiNFO","Hardware monitoring"],
+    ["CrystalDewWorld.CrystalDiskInfo","CrystalDiskInfo","Drive health"],
+    ["WinDirStat.WinDirStat","WinDirStat","Disk usage"],
+    ["Guru3D.Afterburner","MSI Afterburner","GPU tuning"],
+    ["Microsoft.Sysinternals.ProcessExplorer","Process Explorer"],
+    ["Rufus.Rufus","Rufus","Bootable USB drives"],["Balena.Etcher","balenaEtcher","Flash disk images"],
+    ["Ventoy.Ventoy","Ventoy","Multi-boot USB"],["Nvidia.GeForceExperience","GeForce Experience"],
+    ["TeamViewer.TeamViewer","TeamViewer"],["AnyDeskSoftwareGmbH.AnyDesk","AnyDesk"]]},
+  {id:"security", name:"Security and privacy", color:"#2e7d4f", apps:[
+    ["Bitwarden.Bitwarden","Bitwarden","Password manager"],["KeePassXCTeam.KeePassXC","KeePassXC","Offline passwords"],
+    ["Malwarebytes.Malwarebytes","Malwarebytes","Malware scanner"],["Piriform.CCleaner","CCleaner","Cleanup tool"]]},
+  {id:"gaming", name:"Game launchers", color:"#c25a1b", apps:[
+    ["Valve.Steam","Steam"],["EpicGames.EpicGamesLauncher","Epic Games Launcher"],
+    ["ElectronicArts.EADesktop","EA app"],["Ubisoft.Connect","Ubisoft Connect"],
+    ["GOG.Galaxy","GOG Galaxy"],["Blizzard.BattleNet","Battle.net"],
+    ["HeroicGamesLauncher.HeroicGamesLauncher","Heroic Games Launcher","Epic and GOG"],
+    ["PrismLauncher.PrismLauncher","Prism Launcher","Minecraft"]]}
+];
+const FLAGS = '--exact --silent --accept-package-agreements --accept-source-agreements';
+const KEY = 'setwin.selection';
+const $ = id => document.getElementById(id);
+const info = {}; // id -> {name,color}
+let shell = 'cmd';
+let selected = new Set();
 
-            if (selectedApps.length === 0) {
-                alert('Please select at least one application to install.');
-                resultArea.style.display = 'none';
-                return;
-            }
+try { selected = new Set(JSON.parse(localStorage.getItem(KEY) || '[]')); } catch (e) {}
 
-            const ids = Array.from(selectedApps, app => app.value);
-            const appChain = ids
-                .map(id => `winget install --id "${id}" --exact --silent --accept-package-agreements --accept-source-agreements`)
-                .join(' && ');
+function initials(n){ const w=n.replace(/[^A-Za-z0-9+ ]/g,'').split(' '); return (w[0][0]+(w[1]?w[1][0]:(w[0][1]||''))).toUpperCase(); }
 
-            commandOutput.value = appChain;
-            resultArea.style.display = 'block';
-            copyBtn.innerText = 'Copy Command';
-            copyBtn.style.backgroundColor = 'var(--success)';
-        }
+function render(){
+  const root = $('catalog');
+  CATS.forEach(c=>{
+    const sec = document.createElement('div');
+    sec.className='cat'; sec.dataset.cat=c.id;
+    sec.innerHTML = `<div class="cat-head"><h2>${c.name}</h2><span></span><button type="button" data-all="${c.id}"></button></div><div class="grid"></div>`;
+    const grid = sec.querySelector('.grid');
+    c.apps.forEach(([id,name,desc])=>{
+      info[id]={name,color:c.color};
+      const l = document.createElement('label');
+      l.className='app'; l.dataset.search=(name+' '+(desc||'')+' '+id).toLowerCase();
+      l.innerHTML = `<input type="checkbox" value="${id}"><span class="mono" style="background:${c.color}">${initials(name)}</span><span class="name">${name}${desc?`<small>${desc}</small>`:''}</span><span class="tick"></span>`;
+      const cb = l.querySelector('input'); cb.checked = selected.has(id);
+      cb.addEventListener('change',()=>{ cb.checked?selected.add(id):selected.delete(id); update(); });
+      grid.appendChild(l);
+    });
+    root.appendChild(sec);
+  });
+  const e = document.createElement('div'); e.className='empty'; e.id='empty'; e.textContent='No apps match your search.';
+  root.appendChild(e);
+  root.addEventListener('click',ev=>{
+    const b = ev.target.closest('[data-all]'); if(!b) return;
+    const boxes=[...root.querySelectorAll(`[data-cat="${b.dataset.all}"] .app:not([hidden]) input`)];
+    const all = boxes.every(x=>x.checked);
+    boxes.forEach(x=>{ x.checked=!all; !all?selected.add(x.value):selected.delete(x.value); });
+    update();
+  });
+}
 
-        async function copyToClipboard() {
-            const commandOutput = document.getElementById('commandOutput');
-            const copyBtn = document.getElementById('copyBtn');
+function script(sep){
+  return [...selected].map(id=>`winget install --id "${id}" ${FLAGS}`).join(sep);
+}
+function batFile(){
+  const ids=[...selected], n=ids.length;
+  let s='@echo off\r\ntitle SetWin installer\r\nset FAILED=0\r\n\r\n';
+  ids.forEach((id,i)=>{
+    s+=`echo [${i+1}/${n}] Installing ${info[id].name}\r\nwinget install --id "${id}" ${FLAGS}\r\nif errorlevel 1 (echo   Failed: ${info[id].name} & set /a FAILED+=1)\r\n\r\n`;
+  });
+  s+=`echo.\r\necho Done. %FAILED% of ${n} failed.\r\npause\r\n`;
+  return s;
+}
 
-            try {
-                await navigator.clipboard.writeText(commandOutput.value);
-                copyBtn.innerText = 'Copied! ✓';
-                copyBtn.style.backgroundColor = '#047857';
-            } catch (err) {
-                // Clipboard API can be unavailable when opening a local file.
-                commandOutput.focus();
-                commandOutput.select();
-                const copied = document.execCommand('copy');
-                if (copied) {
-                    copyBtn.innerText = 'Copied! ✓';
-                    copyBtn.style.backgroundColor = '#047857';
-                } else {
-                    alert('Copy failed. Select the command and press Ctrl+C.');
-                }
-            }
-        }
-    </script>
+function update(){
+  const n = selected.size;
+  $('count').textContent = `${n} selected`;
+  const chips=$('chips'); chips.innerHTML='';
+  if(!n){ chips.innerHTML='<p class="none">Nothing selected yet. Tick the apps you want on the left.</p>'; }
+  [...selected].forEach(id=>{
+    if(!info[id]) return;
+    const c=document.createElement('span'); c.className='chip';
+    c.innerHTML=`${info[id].name}<button type="button" aria-label="Remove ${info[id].name}">×</button>`;
+    c.querySelector('button').onclick=()=>{ selected.delete(id); sync(); };
+    chips.appendChild(c);
+  });
+  const out=$('out');
+  out.classList.toggle('dim',!n);
+  out.textContent = n ? script(shell==='cmd'?' & ':'; ') : 'Your command will appear here.';
+  $('copy').disabled=$('dl').disabled=!n;
+  document.querySelectorAll('.cat').forEach(sec=>{
+    const boxes=sec.querySelectorAll('input'), on=[...boxes].filter(b=>b.checked).length;
+    sec.querySelector('.cat-head span').textContent = on?`${on} of ${boxes.length} selected`:`${boxes.length} apps`;
+    const vis=[...sec.querySelectorAll('.app:not([hidden]) input')];
+    sec.querySelector('[data-all]').textContent = vis.length && vis.every(b=>b.checked)?'Deselect all':'Select all';
+  });
+  try{ localStorage.setItem(KEY,JSON.stringify([...selected])); }catch(e){}
+}
+function sync(){ document.querySelectorAll('.app input').forEach(b=>b.checked=selected.has(b.value)); update(); }
+
+function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('show'),1800); }
+
+$('q').addEventListener('input',e=>{
+  const q=e.target.value.trim().toLowerCase(); let any=false;
+  document.querySelectorAll('.cat').forEach(sec=>{
+    let vis=0;
+    sec.querySelectorAll('.app').forEach(a=>{ const m=!q||a.dataset.search.includes(q); a.hidden=!m; if(m) vis++; });
+    sec.hidden=!vis; if(vis) any=true;
+  });
+  $('empty').style.display=any?'none':'block'; update();
+});
+[['t-cmd','cmd'],['t-ps','ps']].forEach(([id,s])=>$(id).onclick=()=>{
+  shell=s; $('t-cmd').setAttribute('aria-selected',s==='cmd'); $('t-ps').setAttribute('aria-selected',s==='ps'); update();
+});
+$('copy').onclick=async()=>{
+  const text=$('out').textContent;
+  try{ await navigator.clipboard.writeText(text); toast('Command copied'); }
+  catch(e){
+    const r=document.createRange(); r.selectNodeContents($('out')); const s=getSelection(); s.removeAllRanges(); s.addRange(r);
+    document.execCommand('copy') ? toast('Command copied') : toast('Press Ctrl+C to copy');
+  }
+};
+$('dl').onclick=()=>{
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([batFile()],{type:'application/octet-stream'}));
+  a.download='setwin-install.bat'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000); toast('Script downloaded');
+};
+$('clear').onclick=()=>{ selected.clear(); sync(); };
+
+render();
+// drop any saved ids that no longer exist
+selected=new Set([...selected].filter(id=>info[id]));
+sync();
+</script>
 </body>
 </html>
