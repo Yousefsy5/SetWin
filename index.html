@@ -183,6 +183,9 @@ const CATS = [
   {id:"security", name:"Security and privacy", color:"#2e7d4f", apps:[
     ["Bitwarden.Bitwarden","Bitwarden","Password manager"],["KeePassXCTeam.KeePassXC","KeePassXC","Offline passwords"],
     ["Malwarebytes.Malwarebytes","Malwarebytes","Malware scanner"],["Piriform.CCleaner","CCleaner","Cleanup tool"]]},
+  {id:"social", name:"Social media", color:"#c2185b", apps:[
+    ["9NBLGGH5L9XT","Instagram","Microsoft Store"],["9WZDNCRFJ2WL","Facebook","Microsoft Store"],
+    ["9NH2GPH4JZS4","TikTok","Microsoft Store"]]},
   {id:"gaming", name:"Game launchers", color:"#c25a1b", apps:[
     ["Valve.Steam","Steam"],["EpicGames.EpicGamesLauncher","Epic Games Launcher"],
     ["ElectronicArts.EADesktop","EA app"],["Ubisoft.Connect","Ubisoft Connect"],
@@ -191,6 +194,7 @@ const CATS = [
     ["PrismLauncher.PrismLauncher","Prism Launcher","Minecraft"]]}
 ];
 const FLAGS = '--exact --silent --accept-package-agreements --accept-source-agreements';
+const flagsFor = id => /^[0-9A-Z]{12}$/.test(id) ? FLAGS+' --source msstore' : FLAGS;
 const KEY = 'setwin.selection';
 const $ = id => document.getElementById(id);
 const info = {}; // id -> {name,color}
@@ -231,13 +235,13 @@ function render(){
 }
 
 function script(sep){
-  return [...selected].map(id=>`winget install --id "${id}" ${FLAGS}`).join(sep);
+  return [...selected].map(id=>`winget install --id "${id}" ${flagsFor(id)}`).join(sep);
 }
 function batFile(){
   const ids=[...selected], n=ids.length;
   let s='@echo off\r\ntitle SetWin installer\r\nset FAILED=0\r\n\r\n';
   ids.forEach((id,i)=>{
-    s+=`echo [${i+1}/${n}] Installing ${info[id].name}\r\nwinget install --id "${id}" ${FLAGS}\r\nif errorlevel 1 (echo   Failed: ${info[id].name} & set /a FAILED+=1)\r\n\r\n`;
+    s+=`echo [${i+1}/${n}] Installing ${info[id].name}\r\nwinget install --id "${id}" ${flagsFor(id)}\r\nif errorlevel 1 (echo   Failed: ${info[id].name} & set /a FAILED+=1)\r\n\r\n`;
   });
   s+=`echo.\r\necho Done. %FAILED% of ${n} failed.\r\npause\r\n`;
   return s;
